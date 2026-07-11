@@ -1,0 +1,68 @@
+name: Release
+
+on:
+  push:
+    tags:
+      - "v*"
+
+permissions:
+  contents: write
+
+jobs:
+  release:
+    runs-on: windows-2022
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          submodules: recursive
+
+      - name: Configure
+        run: cmake -S . -B build -A Win32
+
+      - name: Build
+        run: cmake --build build --config Release
+
+      - name: Package
+        shell: pwsh
+        run: |
+          $tag = "${{ github.ref_name }}"
+          $packageName = "Homefront-Free-Camera-$tag-win32"
+          $stageDir = Join-Path $PWD "release\$packageName"
+          $zipPath = Join-Path $PWD "release\$packageName.zip"
+          $hashPath = Join-Path $PWD "release\SHA256SUMS.txt"
+
+          New-Item -ItemType Directory -Path $stageDir -Force | Out-Null
+
+          Copy-Item "build\Release\homefront_freecam.dll" $stageDir
+          Copy-Item "build\Release\injector.exe" $stageDir
+          Copy-Item "README.md" $stageDir
+          Copy-Item "BUILD.md" $stageDir
+
+          Compress-Archive -Path "$stageDir\*" -DestinationPath $zipPath -Force
+
+          $hash = (Get-FileHash $zipPath -Algorithm SHA256).Hash.ToLower()
+          "$hash  $packageName.zip" | Set-Content $hashPath
+
+      - name: Publish release
+        shell: pwsh
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          $tag = "${{ github.ref_name }}"
+          $repo = "${{ github.repository }}"
+          $packageName = "Homefront-Free-Camera-$tag-win32"
+          $zipPath = "release\$packageName.zip"
+          $hashPath = "release\SHA256SUMS.txt"
+
+          gh release view $tag --repo $repo *> $null
+
+          if ($LASTEXITCODE -eq 0) {
+            gh release upload $tag $zipPath $hashPath --clobber --repo $repo
+          } else {
+            gh release create $tag $zipPath $hashPath `
+              --repo $repo `
+              --title "Homefront Free Camera $tag" `
+              --generate-notes
+          }

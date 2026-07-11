@@ -93,6 +93,19 @@ After a successful `Release` build, the expected outputs are:
 
 Depending on the Visual Studio generator, output paths may also appear under `build/Win32/Release/...`.
 
+## Releases
+
+Tagged versions are published automatically through GitHub Actions.
+
+When a tag matching `v*` is pushed, the workflow:
+
+- builds the project on `windows-2022`
+- packages `homefront_freecam.dll` and `injector.exe`
+- includes `README.md` and `BUILD.md`
+- uploads a `Homefront-Free-Camera-<tag>-win32.zip` asset to the GitHub Release page
+
+For release steps, see [BUILD.md](D:/proj/Fcam/BUILD.md).
+
 ## Limitations
 
 - Hardcoded to a specific `HOMEFRONT.exe` build.

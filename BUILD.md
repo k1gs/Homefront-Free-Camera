@@ -99,6 +99,32 @@ The simplest setup is to keep both files together in `build/Release`, or copy th
 5. Switch back to the game and press `F9` to enable freecam.
 6. Press `F10` to unload the mod.
 
+## Creating A Release
+
+The repository includes a GitHub Actions workflow that publishes a release whenever you push a tag matching `v*`.
+
+Typical release flow:
+
+```powershell
+git tag v0.1.0
+git push origin master
+git push origin v0.1.0
+```
+
+The workflow builds the `Win32` release on GitHub, packages:
+
+- `homefront_freecam.dll`
+- `injector.exe`
+- `README.md`
+- `BUILD.md`
+
+and uploads:
+
+- `Homefront-Free-Camera-v0.1.0-win32.zip`
+- `SHA256SUMS.txt`
+
+If GitHub Actions is disabled for the repository, the release workflow will not run until Actions is enabled again.
+
 ## Troubleshooting
 
 ### CMake fails because of architecture
