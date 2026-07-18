@@ -22,15 +22,16 @@ struct FRotator
 
 struct FreecamState
 {
-    bool     enabled  = false;
-    bool     haveLoc  = false;
-    bool     haveRot  = false;
-    FVector  pos      = {};
-    FRotator rot      = {};
-    float    moveSpeed = 300.f;
-    float    fastMult  =   4.f;
-    float    slowMult  =  0.2f;
-    float    rotSpeed  = 40000.f;  // unreal units per second
+    bool     enabled           = false;
+    bool     haveLoc           = false;
+    bool     haveRot           = false;
+    bool     teleportRequested = false;
+    FVector  pos               = {};
+    FRotator rot               = {};
+    float    moveSpeed         = 300.f;
+    float    fastMult          =   4.f;
+    float    slowMult          =  0.2f;
+    float    rotSpeed          = 40000.f;  // unreal units per second
 };
 
 extern FreecamState g_fc;

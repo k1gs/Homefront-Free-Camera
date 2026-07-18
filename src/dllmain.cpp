@@ -19,6 +19,14 @@ static DWORD WINAPI MainThread(LPVOID)
     {
         Input::Update();
 
+        if (Input::JustPressed(VK_F8))
+        {
+            if (g_fc.enabled)
+            {
+                g_fc.teleportRequested = true;
+            }
+        }
+
         if (Input::JustPressed(VK_F9))
             Freecam::Toggle();
 

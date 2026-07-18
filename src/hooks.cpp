@@ -92,8 +92,28 @@ static void __fastcall hkEyes(void* self, void* edx, FVector* outLoc, FRotator* 
         if (outLoc) Freecam::WriteLocation(outLoc);
         if (outRot) Freecam::WriteRotation(outRot);
 
-        // Keep the pawn frozen in place.
-        FreezePawn(self);
+        if (g_fc.teleportRequested)
+        {
+            g_fc.teleportRequested = false;
+            g_fc.enabled = false;
+
+            auto* base = reinterpret_cast<uint8_t*>(self);
+            float* px = reinterpret_cast<float*>(base + 0xBC);
+            float* py = reinterpret_cast<float*>(base + 0xC0);
+            float* pz = reinterpret_cast<float*>(base + 0xC4);
+            if (px && py && pz)
+            {
+                *px = g_fc.pos.X;
+                *py = g_fc.pos.Y;
+                *pz = g_fc.pos.Z;
+                g_frozenPawnPos = g_fc.pos;
+            }
+        }
+        else
+        {
+            // Keep the pawn frozen in place.
+            FreezePawn(self);
+        }
     }
     else if (g_pawnFrozen)
     {

@@ -42,6 +42,7 @@ void Freecam::Reset()
     g_fc.enabled = false;
     g_fc.haveLoc = false;
     g_fc.haveRot = false;
+    g_fc.teleportRequested = false;
 }
 
 void Freecam::CaptureLocation(const FVector& v)
